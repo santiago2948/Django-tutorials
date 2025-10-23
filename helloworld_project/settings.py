@@ -11,9 +11,14 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from a .env file at project root (if present)
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
@@ -75,8 +80,15 @@ WSGI_APPLICATION = 'helloworld_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.getenv('DB_ENGINE', 'django.db.backends.mysql'),
+        'NAME': os.getenv('DB_NAME', 'djangodocker'),           # Nombre de tu base de datos
+        'USER': os.getenv('DB_USER', 'admin'),                 # Usuario
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),          # Password
+        'HOST': os.getenv('DB_HOST', 'localhost'),  # Endpoint MySQL / RDS
+        'PORT': os.getenv('DB_PORT', '3306'),
+        'OPTIONS': {
+            'init_command': os.getenv('DB_INIT_COMMAND', "SET sql_mode='STRICT_TRANS_TABLES'")
+        }
     }
 }
 
